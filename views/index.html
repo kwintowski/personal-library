@@ -35,7 +35,7 @@
     <hr style='margin: 50px'>
     <div id ='sampleposting'>
       <h2 style="text-align: left">Test API responses:</h2>
-      <form action="/api/books" method="post" class="border">
+      <form action="/api/books" method="post" id="bookPost" class="border">
         <h4>Test post to /api/books</h4>
         Book Title:<br>
         <input type="text" name="title" value=""><br>
@@ -74,11 +74,22 @@
       /*
       *  For #sampleposting to update form action url to test inputs book id
       */
-      $(function() {
+      $(function() {      
        $('#commentTest').submit(function(){
          var id = $('#idinputtest').val();
          $(this).attr('action', "/api/books/" + id);
        });
+        $('#bookPost').submit(function(e) {
+          $.ajax({
+            url: '/api/books',
+            type: 'post',
+            data: $('#bookPost').serialize(),
+            success: function(data) {
+              $('#jsonResult').text(JSON.stringify(data));
+            }
+          });
+          e.preventDefault();
+        });
       });
    </script>
   </body>
