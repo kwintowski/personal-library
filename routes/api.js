@@ -40,19 +40,23 @@ module.exports = function (app) {
       .post(function (req, res){
       
         var title = req.body.title;
-          
-        MongoClient.connect(MONGODB_CONNECTION_STRING, { useNewUrlParser: true }, (err, client) => {
-          var db = client.db('myMongoDB');
+        
+        if(title=="")
+          res.json("Missing Title");
+        else {
+          MongoClient.connect(MONGODB_CONNECTION_STRING, { useNewUrlParser: true }, (err, client) => {
+            var db = client.db('myMongoDB');
 
-          if(err) console.log('Database error: ' + err);
+            if(err) console.log('Database error: ' + err);
 
-          var libraryHandler = new LibraryHandler(app,db);
-      
-          libraryHandler.addBook(COLLECTION, title)
-          .then((result)=>{console.log(result);res.json(result);})
-          .catch((reject)=>{res.json(reject);}); 
-          //response will contain new book object including atleast _id and title
-        })
+            var libraryHandler = new LibraryHandler(app,db);
+
+            libraryHandler.addBook(COLLECTION, title)
+            .then((result)=>{console.log(result);res.json(result);})
+            .catch((reject)=>{res.json(reject);}); 
+            //response will contain new book object including atleast _id and title
+          })
+        }
       })
 
       .delete(function(req, res){
@@ -81,12 +85,12 @@ module.exports = function (app) {
           var libraryHandler = new LibraryHandler(app,db);
           libraryHandler.getOneBook(COLLECTION,bookid)
           .then((result)=>{
-            if(result=={}){
+            if(result==null){
               res.json("no book exists");
             } else {
               res.json(result);
             }})
-          .catch((reject)=>{res.json(reject);});          
+          .catch((reject)=>{res.json("no book exists");});          
         });
         //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
       })

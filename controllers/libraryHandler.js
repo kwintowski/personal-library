@@ -11,7 +11,7 @@ function LibraryHandler(app, db) {
       db.collection(library).insertOne(
         {title:bookTitle, comments:[]},((err, doc) => {
         if(err) reject(err);
-        resolve(doc.ops);
+        resolve(doc.ops[0]);
       }));
     });
   }
@@ -31,7 +31,7 @@ function LibraryHandler(app, db) {
     
     return new Promise(function(resolve, reject){  
       db.collection(library).findOne({_id:ObjectId(bookid)},(err, doc) => {
-        if(err) reject(err);
+        if(err) reject("no book exists");
         resolve(doc);
       });
     });
